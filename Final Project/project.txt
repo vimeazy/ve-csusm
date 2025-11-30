@@ -1,0 +1,228 @@
+Perfect, let’s lay this out so you and your team know **exactly** what’s happening and what needs to get done.
+
+---
+
+## 1. Big Picture – What We’re Building
+
+**Project:** CSUSM Club & Event Hub (“CougarConnect”)
+**Goal:** Central place for students to **find events & clubs** and **RSVP**, and for club officers to **create/manage events**.
+**Tech:** Flask, Jinja, WTForms, SQLAlchemy, HTML/CSS/Bootstrap, Auth (register/login/logout) 
+
+Your app must:
+
+* Solve a real user problem
+* Have **CRUD for at least two entities** (Clubs, Events, RSVPs)
+* Use **WTForms with validation**
+* Have **authentication + protected routes**
+* Be **responsive** and reasonably clean code 
+
+---
+
+## 2. Phase 0 – Team Alignment (Now)
+
+**You already:**
+
+* Picked the idea ✅
+* Wrote the 150–200 word pitch ✅
+
+**Next:**
+
+* Decide rough **roles** (everyone still codes, but has focus):
+
+  * **Backend/Auth lead** – user model, login, register, sessions
+  * **Database/Models lead** – tables & relationships
+  * **Frontend/UI lead** – Bootstrap, layout, styling
+  * **PM/Docs lead** – keeps track of tasks, presentation, and report
+
+---
+
+## 3. Phase 1 – Requirements & Design
+
+### a) Define user roles
+
+* **Student (default user):**
+
+  * Browse clubs
+  * Browse events
+  * RSVP / cancel RSVP
+  * See “My Events” dashboard
+* **Club officer:**
+
+  * Same as student
+  * PLUS: create/update/delete **their** club(s) and events
+* (Optional) **Admin:** manage all clubs/events
+
+### b) Core user stories
+
+Examples (you can reuse in report/presentation):
+
+* “As a student, I can browse upcoming events and RSVP so I don’t miss opportunities.”
+* “As a club officer, I can create an event and see RSVPs so I can plan space/snacks.” 
+
+### c) ERD / Database Design (minimum)
+
+Tables we’ll likely use:
+
+* **User**
+
+  * id, name, email, password_hash, role (student/officer/admin)
+* **Club**
+
+  * id, name, description, category, created_by (FK → User)
+* **Event**
+
+  * id, club_id (FK → Club), title, description, date_time, location, capacity (optional)
+* **RSVP**
+
+  * id, user_id (FK → User), event_id (FK → Event), timestamp
+
+(Optional but nice):
+
+* **ClubMembership** (user_id, club_id, role_in_club)
+
+### d) Wireframes (quick sketch)
+
+* Home page – list of upcoming events (sorted by date).
+* Event detail page – info + RSVP button.
+* Clubs page – list of clubs.
+* Club detail – club info + future events.
+* “My Events” – list events the user RSVP’d to.
+* Auth pages – login/register.
+
+---
+
+## 4. Phase 2 – Project Setup (Code Skeleton)
+
+1. Create **Git repo** & base Flask project:
+
+   * `app/__init__.py` (app factory)
+   * `app/models.py`
+   * `app/routes.py` or Blueprints (`auth`, `main`, `clubs`, `events`)
+   * `config.py` (using env variables) 
+
+2. Set up:
+
+   * Virtual environment
+   * Install packages: Flask, Flask-WTF, Flask-Login, Flask-Migrate, Flask-Bootstrap (or just CDN), SQLAlchemy, etc.
+   * Base layout template: `base.html` with navbar + Bootstrap.
+
+3. Connect database:
+
+   * Use SQLite for dev.
+   * Add `User`, `Club`, `Event`, `RSVP` models.
+   * Run migrations.
+
+---
+
+## 5. Phase 3 – Implement Core Features (Build Order)
+
+### Step 1 – Authentication
+
+* Register form (WTForms): name, email, password, confirm password, role (maybe hidden or default student).
+* Login form + session management (Flask-Login).
+* Logout route.
+* Protect routes like “create event”, “create club”.
+
+### Step 2 – Club CRUD
+
+* Routes:
+
+  * List all clubs (`/clubs`)
+  * View a club (`/clubs/<id>`)
+  * Create club (officer only)
+  * Edit club (creator only)
+  * Delete club (creator/admin only)
+* WTForms for club create/edit with validation.
+
+### Step 3 – Event CRUD
+
+* Routes:
+
+  * List events (homepage `/`)
+  * View event (`/events/<id>`)
+  * Create event (club officer, tied to a club)
+  * Edit event (creator only)
+  * Delete event
+* Sort events by date (upcoming first).
+* Form validation for date/time, required fields.
+
+### Step 4 – RSVP System
+
+* `RSVP` table (user_id + event_id).
+* Routes:
+
+  * “RSVP” → create RSVP record.
+  * “Cancel RSVP” → delete RSVP record.
+  * Event page shows count of attendees (and list, if you want).
+
+### Step 5 – Dashboards / Views
+
+* **Home page:** upcoming events (sorted).
+* **My Events:** show events where `RSVP.user_id == current_user.id`.
+* (Optional) My Clubs: clubs user owns or belongs to.
+
+---
+
+## 6. Phase 4 – UI & Responsiveness
+
+* Use **Bootstrap**:
+
+  * Navbar with links: Home, Events, Clubs, My Events, Login/Logout.
+  * Cards for events and clubs.
+  * Make sure it looks good on mobile (stacked columns, no horizontal scroll).
+* Add basic **error messages** and **flash messages** (e.g., “Event created”, “Login failed”).
+
+---
+
+## 7. Phase 5 – Testing & Cleanup
+
+* Walk through all user flows as:
+
+  * New student user (register → browse → RSVP → My Events).
+  * Club officer (register → create club → create event → view RSVPs).
+* Fix bugs:
+
+  * Broken links
+  * Validation errors
+  * Unauthorized access (e.g., student trying to edit event they don’t own).
+* Make sure:
+
+  * No secrets (keys, passwords) are hard-coded. Use env variables. 
+
+---
+
+## 8. Phase 6 – Presentation Prep
+
+From the guideline: 8–10 min, with problem framing, live demo, behind-the-scenes, reflection. 
+
+Create a simple plan:
+
+1. **Intro & Problem (1–2 min)** – “Events are scattered… here’s who we help.”
+2. **Live Demo (4–5 min)** – show:
+
+   * Register/login
+   * Browse events
+   * RSVP
+   * Officer creating a club + event
+3. **Technical Deep Dive (2–3 min)** – models, routes, auth, WTForms.
+4. **Reflection (1–2 min)** – what went well, what was hard, what you’d add next.
+
+---
+
+## 9. Phase 7 – Written Report Tasks
+
+Use their sections as checklist: 
+
+1. **Overview** – What CougarConnect is, who uses it, why it matters.
+2. **Problem & Users** – Describe CSUSM event chaos + how you measure success (students find/join events).
+3. **Implementation Details** – Forms, validation, auth, main models, libraries.
+4. **Results & Demo Scenarios** – Describe user flows (like your demo script).
+5. **Challenges & Solutions** – Bugs, design issues, auth problems, etc.
+6. **Team Contributions** – 1 paragraph: who did what.
+
+---
+
+If you want, next I can:
+
+* Turn this into a **task list by person**
+* Or sketch the **actual models.py** + rough route structure so you’re ready to start coding in VS Code.

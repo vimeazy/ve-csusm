@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card shadow-sm p-4">
+      <h1 class="h4 mb-3">
+        {{ form_title or "Create Event" }}
+      </h1>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <!-- TITLE -->
+        <div class="mb-3">
+          {{ form.title.label(class="form-label") }}
+          {{ form.title(class="form-control") }}
+          {% for error in form.title.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-3">
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control", rows="6") }}
+          {% for error in form.description.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- LOCATION -->
+        <div class="mb-3">
+          {{ form.location.label(class="form-label") }}
+          {{ form.location(class="form-control") }}
+          {% for error in form.location.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- CLUB -->
+        <div class="mb-3">
+          {{ form.club_id.label(class="form-label") }}
+          {{ form.club_id(class="form-select") }}
+          {% for error in form.club_id.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- START TIME -->
+        <div class="mb-3">
+          {{ form.start_time.label(class="form-label") }}
+          {{ form.start_time(class="form-control") }}
+          {% if form.start_time.description %}
+            <div class="form-text">
+              {{ form.start_time.description }}
+            </div>
+          {% endif %}
+          {% for error in form.start_time.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- SUBMIT -->
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('events') }}" class="btn btn-link">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

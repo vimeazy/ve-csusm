@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card shadow-sm p-4">
+      <h2 class="mb-4 text-primary fw-bold">
+        {{ form_title or "Create Club" }}
+      </h2>
+
+      {# IMPORTANT: enctype so logo files are sent #}
+      <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <!-- Club name -->
+        <div class="mb-3">
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control", placeholder="e.g., CS Club, Esports, BSU") }}
+          {% for error in form.name.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Card preview / tagline -->
+        <div class="mb-3">
+          {{ form.short_description.label(class="form-label") }}
+          {{ form.short_description(class="form-control", placeholder="Short teaser shown on the club card...") }}
+          <div class="form-text">
+            This appears on the club cards. Keep it short (1–2 sentences).
+          </div>
+          {% for error in form.short_description.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Rich text details (Quill) -->
+        <div class="mb-3">
+          {{ form.description.label(class="form-label") }}
+          <small class="text-muted d-block mb-1">
+            Use this for About Us, meeting times, socials, etc.
+          </small>
+
+          <div id="club-quill-editor" class="form-control" style="height: 250px;"></div>
+          {{ form.description(id="club-description-input", class="d-none") }}
+
+          {% for error in form.description.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Club logo upload -->
+        <div class="mb-3">
+          {{ form.image.label(class="form-label") }}
+          {{ form.image(class="form-control") }}
+          {% if club is defined and club.logo_filename %}
+            <div class="mt-2">
+              <span class="small text-muted d-block mb-1">Current logo:</span>
+              <img
+                src="{{ url_for('static', filename='uploads/' ~ club.logo_filename) }}"
+                alt="{{ club.name }} logo"
+                class="img-thumbnail"
+                style="max-height: 120px; object-fit: cover;"
+              >
+            </div>
+          {% endif %}
+          {% for error in form.image.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Club banner upload -->
+        <div class="mb-3">
+          {{ form.banner.label(class="form-label") }}
+          {{ form.banner(class="form-control", id="banner-input") }}
+          <small class="form-text text-muted d-block mt-1">
+            Drag the banner image to position it.
+          </small>
+          
+          <!-- Banner preview -->
+          <div id="banner-preview-container" class="mt-3" style="display: none;">
+            <div class="banner-preview" style="width: 100%; height: 300px; background: #f5f5f5; border-radius: 0.75rem; overflow: hidden; position: relative; border: 2px solid #ddd;">
+              <img id="banner-preview-img" src="" alt="Banner preview" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+            </div>
+          </div>
+
+          {% if club is defined and club.banner_filename %}
+            <div class="mt-3">
+              <span class="small text-muted d-block mb-1">Current banner:</span>
+              <img
+                src="{{ url_for('static', filename='uploads/' ~ club.banner_filename) }}"
+                alt="{{ club.name }} banner"
+                class="img-thumbnail"
+                style="max-width: 100%; max-height: 150px; object-fit: cover;"
+              >
+            </div>
+          {% endif %}
+          {% for error in form.banner.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Website -->
+        <div class="mb-3">
+          {{ form.website.label(class="form-label") }}
+          {{ form.website(class="form-control", placeholder="https://example.com") }}
+          {% for error in form.website.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Contact email -->
+        <div class="mb-3">
+          {{ form.contact_email.label(class="form-label") }}
+          {{ form.contact_email(class="form-control", placeholder="club@example.edu") }}
+          {% for error in form.contact_email.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <!-- Contact phone -->
+        <div class="mb-3">
+          {{ form.contact_phone.label(class="form-label") }}
+          {{ form.contact_phone(class="form-control", placeholder="(760) 555-1234") }}
+          {% for error in form.contact_phone.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Save Club
+        </button>
+        <a href="{{ url_for('clubs') }}" class="btn btn-link">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+
+{# Quill init just for this page #}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var quillContainer = document.getElementById("club-quill-editor");
+    if (!quillContainer || typeof Quill === "undefined") {
+      return;
+    }
+
+    var quill = new Quill("#club-quill-editor", {
+      theme: "snow",
+      placeholder: "Tell students what your club is about...",
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ["bold", "italic", "underline"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["link"],
+          ["clean"]
+        ]
+      }
+    });
+
+    // Set initial content from the hidden textarea (when editing)
+    var hiddenInput = document.getElementById("club-description-input");
+    if (hiddenInput && hiddenInput.value) {
+      try {
+        quill.root.innerHTML = hiddenInput.value;
+      } catch (e) {
+        quill.root.innerHTML = hiddenInput.value;
+      }
+    }
+
+    // On submit, copy Quill HTML into hidden textarea
+    var form = quillContainer.closest("form");
+    if (form) {
+      form.addEventListener("submit", function () {
+        var html = quill.root.innerHTML;
+        hiddenInput.value = html;
+      });
+    }
+  });
+
+  // Banner image preview
+  document.addEventListener("DOMContentLoaded", function () {
+    const bannerInput = document.getElementById("banner-input");
+    const previewContainer = document.getElementById("banner-preview-container");
+    const previewImg = document.getElementById("banner-preview-img");
+
+    bannerInput.addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          previewImg.src = event.target.result;
+          previewContainer.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+</script>
+
+{% endblock %}

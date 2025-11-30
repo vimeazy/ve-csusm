@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-4 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        {% if current_user.profile_image_filename %}
+          <div class="profile-image-container">
+            <img 
+              src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image_filename) }}"
+              alt="Profile picture">
+          </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h2 class="h4 fw-bold mb-1">My Profile</h2>
+            <span class="badge bg-primary-subtle text-primary">
+              {{ current_user.role|capitalize }}
+            </span>
+          </div>
+          <a href="{{ url_for('edit_profile') }}" class="btn btn-sm btn-outline-secondary">
+            Edit
+          </a>
+        </div>
+
+        <p class="mb-1">
+          <strong>Name:</strong><br>
+          <span class="text-primary fw-semibold">{{ current_user.name }}</span>
+        </p>
+        <p class="mb-1">
+          <strong>Email:</strong><br>
+          <span class="text-primary fw-semibold">{{ current_user.email }}</span>
+        </p>
+
+        <hr>
+
+        <a href="{{ url_for('clubs', my='1') }}" class="btn btn-outline-primary w-100 mb-2">
+          View My Clubs
+        </a>
+
+        <p class="text-muted small mb-0">
+          Use My Clubs to see organizations where you’re listed as an officer.
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-lg-8">
+    {# Officer clubs section #}
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h3 class="h5 fw-bold mb-3">Clubs I’m an Officer For</h3>
+
+        {% if officer_clubs %}
+          <ul class="list-group list-group-flush">
+            {% for club in officer_clubs %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <a href="{{ url_for('club_detail', club_id=club.id) }}" class="fw-semibold text-decoration-none">
+                    {{ club.name }}
+                  </a>
+                  {% if club.website %}
+                    <div class="small">
+                      <a href="{{ club.website }}" target="_blank" rel="noopener">
+                        {{ club.website }}
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+                <a href="{{ url_for('club_edit', club_id=club.id) }}" class="btn btn-sm btn-outline-secondary">
+                  Edit
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">
+            You’re not listed as an officer for any clubs yet.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Events created by this user #}
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h3 class="h5 fw-bold mb-3">Events I Created</h3>
+
+        {% if created_events %}
+          <ul class="list-group list-group-flush">
+            {% for event in created_events %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <a href="{{ url_for('event_detail', event_id=event.id) }}" class="fw-semibold text-decoration-none">
+                    {{ event.title }}
+                  </a>
+                  <div class="small text-muted">
+                    {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+                    · {{ event.location }}
+                  </div>
+                </div>
+                <a href="{{ url_for('event_edit', event_id=event.id) }}" class="btn btn-sm btn-outline-secondary">
+                  Edit
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">You haven’t created any events yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Events user RSVP’d to #}
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h3 class="h5 fw-bold mb-3">Events I RSVP’d To</h3>
+
+        {% if rsvp_events %}
+          <ul class="list-group list-group-flush">
+            {% for event in rsvp_events %}
+              <li class="list-group-item">
+                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="fw-semibold text-decoration-none">
+                  {{ event.title }}
+                </a>
+                <div class="small text-muted">
+                  {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+                  · {{ event.location }}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">You haven’t RSVP’d to any events yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

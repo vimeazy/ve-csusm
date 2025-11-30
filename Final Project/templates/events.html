@@ -1,0 +1,189 @@
+<!-- @ts-nocheck -->
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="h2 fw-bold mb-0">Upcoming Events</h1>
+    <p class="text-muted mb-0">
+      See what's happening around campus.
+      {% if sort_by == 'rsvp' %}
+        <span class="badge bg-success ms-2">📊 Sorted by Popularity</span>
+      {% elif sort_by == 'date' or not sort_by %}
+        <span class="badge bg-info ms-2">📅 Sorted by Date</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="d-flex flex-column gap-2 align-items-end">
+    {% if current_user.is_authenticated and current_user.role == "officer" %}
+      <a href="{{ url_for('event_create') }}" class="btn btn-primary btn-sm">
+        + Create Event
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{# Search bar and filters #}
+<form class="row g-2 mb-4" method="GET" action="{{ url_for('events') }}">
+  <div class="col-md-6 position-relative">
+    <input
+      type="text"
+      name="q"
+      id="eventSearch"
+      class="form-control form-control-sm"
+      placeholder="Search events by name or description..."
+      value="{{ search_query or '' }}"
+      autocomplete="off"
+    >
+    <div id="searchSuggestions" class="position-absolute w-100 mt-1" style="display: none; z-index: 1000;">
+      <div class="list-group list-group-flush" id="suggestionsList"></div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary btn-sm w-100 events-search-btn">
+      Search
+    </button>
+  </div>
+  <div class="col-md-4">
+    <input type="hidden" name="q" value="{{ search_query or '' }}">
+    <div class="d-flex gap-2 justify-content-end">
+      {# Sort dropdown #}
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle btn-sm events-filter-btn" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if sort_by == 'rsvp' %}📊{% else %}📅{% endif %}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+          <li>
+            <a class="dropdown-item events-filter-item {% if sort_by == 'date' or not sort_by %}active{% endif %}" href="{{ url_for('events', q=search_query, sort='date', view=view) }}">
+              📅 By Date
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item events-filter-item {% if sort_by == 'rsvp' %}active{% endif %}" href="{{ url_for('events', q=search_query, sort='rsvp', view=view) }}">
+              📊 Popular
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {# View dropdown #}
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle btn-sm events-filter-btn" type="button" id="viewDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          {% if view == 'list' %}📋{% else %}🎴{% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="viewDropdown">
+          <li>
+            <a class="dropdown-item events-filter-item {% if view == 'card' or not view %}active{% endif %}" href="{{ url_for('events', q=search_query, sort=sort_by, view='card') }}">
+              🎴 Card View
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item events-filter-item {% if view == 'list' %}active{% endif %}" href="{{ url_for('events', q=search_query, sort=sort_by, view='list') }}">
+              📋 List View
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% if events %}
+  {% if view == 'list' %}
+    {# LIST VIEW #}
+    <div class="list-group">
+      {% for e in events %}
+        <div class="list-group-item py-3 event-list-item" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <h6 class="mb-1">
+                <a href="{{ url_for('event_detail', event_id=e.id) }}" class="text-decoration-none">{{ e.title }}</a>
+              </h6>
+              <p class="mb-2 text-muted small">
+                {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
+              </p>
+              {% if e.description %}
+                <p class="mb-2 small text-muted event-description">
+                  {{ e.description | striptags }}
+                </p>
+              {% endif %}
+              <span class="badge bg-light text-dark border">RSVPs: {{ e.rsvps|length }}</span>
+            </div>
+            <div class="flex-shrink-0 ms-3">
+              <a href="{{ url_for('event_detail', event_id=e.id) }}" class="btn btn-sm btn-outline-primary me-2">View</a>
+              {% if current_user.is_authenticated and e.created_by == current_user.id %}
+                <a href="{{ url_for('event_edit', event_id=e.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {# CARD VIEW #}
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+    {% for e in events %}
+      <div class="col event-card-item" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+        <div class="card h-100 shadow-sm event-card">
+          {% if e.image_filename %}
+            <img
+              src="{{ url_for('static', filename='uploads/' ~ e.image_filename) }}"
+              class="card-img-top"
+              alt="{{ e.title }}"
+            >
+          {% endif %}
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title mb-1">
+              <a href="{{ url_for('event_detail', event_id=e.id) }}" class="text-decoration-none">
+                {{ e.title }}
+              </a>
+            </h5>
+
+            <p class="card-subtitle text-muted mb-2">
+              {{ e.club.name }}
+            </p>
+
+            <p class="small mb-1">
+              <strong>When:</strong>
+              {{ e.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+            </p>
+            <p class="small mb-2">
+              <strong>Where:</strong> {{ e.location }}
+            </p>
+
+            {# 👇 HERE is the RSVPs line #}
+            <p class="small text-muted mb-3">
+              RSVPs: {{ e.rsvps|length }}
+            </p>
+
+            {% if e.description %}
+              <p class="card-text small text-muted mb-3 event-card-description">
+                {{ e.description | striptags }}
+              </p>
+            {% endif %}
+
+            <div class="mt-auto d-flex justify-content-between">
+              <a href="{{ url_for('event_detail', event_id=e.id) }}" class="btn btn-sm btn-outline-primary">
+                View Details
+              </a>
+
+              {% if current_user.is_authenticated and e.created_by == current_user.id %}
+                <a href="{{ url_for('event_edit', event_id=e.id) }}" class="btn btn-sm btn-outline-secondary">
+                  Edit
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% else %}
+  <p class="text-muted">No events yet. Check back soon!</p>
+{% endif %}
+
+
+{% endblock %}

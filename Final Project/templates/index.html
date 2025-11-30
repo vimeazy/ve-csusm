@@ -1,0 +1,291 @@
+<!-- @ts-nocheck -->
+{% extends "base.html" %}
+{% block content %}
+
+<!-- HERO CAROUSEL SECTION -->
+<div class="hero-carousel-container mb-4" id="heroCarousel">
+  <div class="hero-carousel-wrapper">
+    <!-- Welcome Slide (Default) -->
+    <div class="hero-carousel-slide active" data-slide-index="0">
+      <div class="hero-carousel-image-wrapper" style="background-image: url('{{ url_for('static', filename='img/csusm_hero.png') }}'); background-size: cover; background-position: 90% center; width: 100%; height: 100%;"></div>
+      
+      <div class="hero-overlay">
+        <div class="hero-inner">
+          <h1 class="hero-title">Welcome to <span class="hero-cougar">Cougar</span><span class="hero-hub">Hub</span></h1>
+          <p class="hero-subtitle">
+            Stay connected. Discover events. Get involved at CSUSM.
+          </p>
+
+          <div class="hero-actions mt-3">
+            <a href="{{ url_for('events') }}" class="btn btn-light me-2">
+              View Events
+            </a>
+            <a href="{{ url_for('clubs') }}" class="btn btn-outline-light">
+              Browse Clubs
+            </a>
+            {% if current_user.is_authenticated and current_user.role == "officer" %}
+              <a href="{{ url_for('event_create') }}" class="btn btn-primary ms-2">
+                + Create Event
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Event Slides -->
+    {% for event in featured_events %}
+      <div class="hero-carousel-slide" data-slide-index="{{ loop.index }}">
+        {% if event.image_filename %}
+          <img 
+            src="{{ url_for('static', filename='uploads/' ~ event.image_filename) }}" 
+            class="hero-carousel-image"
+            alt="{{ event.title }}"
+          >
+        {% else %}
+          <div class="hero-carousel-placeholder"></div>
+        {% endif %}
+        
+        <div class="hero-overlay hero-overlay-event">
+          <div class="hero-inner">
+            <div class="hero-event-badge">Featured Event</div>
+            <h1 class="hero-title">{{ event.title }}</h1>
+            <p class="hero-subtitle">{{ event.club.name }}</p>
+            <p class="hero-event-details">
+              📅 {{ event.start_time.strftime("%B %d, %Y") }} at {{ event.start_time.strftime("%I:%M %p") }}
+              <br>
+              👥 {{ event.rsvps|length }} people interested
+            </p>
+
+            <div class="hero-actions mt-3">
+              <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-light me-2">
+                View Event
+              </a>
+              <a href="{{ url_for('events') }}" class="btn btn-outline-light">
+                Browse All
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Carousel Navigation Dots -->
+  <div class="hero-carousel-dots">
+    <button 
+      class="carousel-dot active" 
+      data-dot-index="0"
+      aria-label="Go to welcome slide"
+    ></button>
+    {% for event in featured_events %}
+      <button 
+        class="carousel-dot" 
+        data-dot-index="{{ loop.index }}"
+        aria-label="Go to featured event slide {{ loop.index }}"
+      ></button>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- QUICK STATS -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0s;">
+    <div class="card stat-card shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Active Clubs</div>
+        <div class="stat-value">{{ club_count }}</div>
+        <div class="stat-caption text-muted">Student organizations on CougarHub</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0.1s;">
+    <div class="card stat-card shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Upcoming Events</div>
+        <div class="stat-value">{{ event_count }}</div>
+        <div class="stat-caption text-muted">Events listed on the platform</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0.2s;">
+    <div class="card stat-card shadow-sm">
+      <div class="card-body">
+        <div class="stat-label">Total RSVPs</div>
+        <div class="stat-value">{{ rsvp_count }}</div>
+        <div class="stat-caption text-muted">Students planning to attend</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HAPPENING THIS WEEK -->
+<div class="section-header mb-4">
+  <div class="d-flex justify-content-between align-items-start">
+    <div>
+      <h2 class="section-title mb-1">📅 Happening This Week</h2>
+      {% if this_week_events %}
+        <span class="text-muted small">
+          {{ this_week_events|length }} event{{ this_week_events|length != 1 and 's' or '' }} this week
+        </span>
+      {% endif %}
+    </div>
+    <div class="text-end">
+      <div class="week-date">Week of {{ week_start_date.strftime("%B %d, %Y") }}</div>
+    </div>
+  </div>
+</div>
+
+{% if this_week_events %}
+  <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+    {% for e in this_week_events %}
+      <div class="col" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: {{ loop.index0 * 0.1 }}s;">
+        <a href="{{ url_for('event_detail', event_id=e.id) }}" class="event-card-link">
+          <div class="card h-100 shadow-sm">
+            {% if e.image_filename %}
+              <img
+                src="{{ url_for('static', filename='uploads/' ~ e.image_filename) }}"
+                class="card-img-top event-img"
+                alt="{{ e.title }}"
+              >
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title mb-1">{{ e.title }}</h5>
+              <p class="text-muted small mb-2">{{ e.club.name }}</p>
+              <p class="small mb-1">
+                <strong>Date:</strong>
+                {{ e.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+              </p>
+              <p class="small text-muted mb-0">
+                RSVPs: {{ e.rsvps|length }}
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="no-events-message mb-4">
+    <p class="text-muted">No Events This Week!</p>
+  </div>
+{% endif %}
+
+<!-- PROMOTIONAL BANNER -->
+<div class="promo-banner mb-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0.3s;">
+  <div class="promo-content">
+    <span class="promo-badge">✨ Featured</span>
+    <h3 class="promo-title">Don't Miss Winter Events!</h3>
+    <p class="promo-text">Discover exciting opportunities to connect, learn, and celebrate with your campus community this season.</p>
+    <a href="{{ url_for('events', sort='rsvp') }}" class="promo-btn">See What's Popular</a>
+  </div>
+</div>
+
+<!-- UPCOMING EVENTS -->
+<div class="section-header mb-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="section-title mb-0">📍 All Upcoming Events</h2>
+
+    <div class="d-flex align-items-center gap-2">
+      <button type="button"
+              class="btn btn-outline-secondary btn-sm"
+              id="all-events-prev">
+        ‹
+      </button>
+      <button type="button"
+              class="btn btn-outline-secondary btn-sm"
+              id="all-events-next">
+        ›
+      </button>
+      <a href="{{ url_for('events') }}" class="btn btn-outline-primary btn-sm">
+        View All Events
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if events %}
+  <div class="home-events-row mb-4" id="all-events-row">
+    {% for e in events %}
+      <a href="{{ url_for('event_detail', event_id=e.id) }}" class="event-card-link" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: {{ loop.index0 * 0.1 }}s; display: inline-block;">
+        <div class="card shadow-sm" style="min-width: 280px; max-width: 320px;">
+          {% if e.image_filename %}
+            <img
+              src="{{ url_for('static', filename='uploads/' ~ e.image_filename) }}"
+              class="card-img-top event-img"
+              alt="{{ e.title }}"
+            >
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title mb-1">{{ e.title }}</h5>
+            <p class="text-muted small mb-2">{{ e.club.name }}</p>
+            <p class="small mb-1">
+              <strong>Date:</strong>
+              {{ e.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+            </p>
+            <p class="small text-muted mb-0">
+              RSVPs: {{ e.rsvps|length }}
+            </p>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No upcoming events yet. Check back soon!</p>
+{% endif %}
+
+<!-- FEATURED CLUBS -->
+{% if featured_clubs %}
+  <div class="section-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="section-title mb-0">👥 Featured Clubs</h2>
+      <a href="{{ url_for('clubs') }}" class="btn btn-outline-primary btn-sm">
+        Browse All Clubs
+      </a>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for club in featured_clubs %}
+      <div class="col" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: {{ loop.index0 * 0.1 }}s;">
+        <a href="{{ url_for('club_detail', club_id=club.id) }}" class="event-card-link">
+          <div class="card h-100 shadow-sm featured-club-card">
+            {% if club.logo_filename %}
+              <img
+                src="{{ url_for('static', filename='uploads/' ~ club.logo_filename) }}"
+                class="card-img-top club-logo-img"
+                alt="{{ club.name }} logo"
+              >
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title mb-1">{{ club.name }}</h5>
+              {% if club.short_description %}
+                <p class="text-muted small mb-2">
+                  {{ club.short_description }}
+                </p>
+              {% endif %}
+              {% if club.website %}
+                <p class="small mb-0">
+                  <strong>Website:</strong>
+                  <span class="text-muted">{{ club.website }}</span>
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<!-- HERO IMAGE SECTION -->
+<div class="mt-5 mb-4">
+  <img 
+    src="{{ url_for('static', filename='img/csusm_hero_2.jpg') }}"
+    class="img-fluid rounded shadow-sm"
+    alt="CSUSM Campus"
+    style="width: 100%; height: auto; display: block;">
+</div>
+
+{% endblock %}

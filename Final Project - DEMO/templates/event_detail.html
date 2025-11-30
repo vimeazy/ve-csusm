@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="mb-3">
+  <a href="{{ url_for('events') }}" class="btn btn-link btn-sm px-0">
+    ← Back to all events
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h1 class="h4 mb-1">{{ event.title }}</h1>
+    <p class="text-muted small mb-3">
+      Created by {{ event.creator.name }}
+    </p>
+
+    <p class="mb-1">
+      <strong>Location:</strong> {{ event.location }}
+    </p>
+    <p class="mb-1">
+      <strong>Date:</strong>
+      {{ event.start_time.strftime("%Y-%m-%d %I:%M %p") }}
+    </p>
+    <p class="mb-3">
+      <strong>RSVPs:</strong> {{ event.rsvps|length }}
+    </p>
+
+    {% if event.description %}
+      <p class="mb-3">{{ event.description }}</p>
+    {% endif %}
+
+    {% if event.club %}
+      <p class="mb-1">
+        <strong>Club:</strong> {{ event.club.name }}
+      </p>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+      <div class="d-flex gap-2 mb-3">
+        {% if user_has_rsvped %}
+          <form method="POST"
+                action="{{ url_for('cancel_rsvp', event_id=event.id) }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">
+              Cancel RSVP
+            </button>
+          </form>
+        {% else %}
+          <form method="POST"
+                action="{{ url_for('rsvp_event', event_id=event.id) }}">
+            <button type="submit" class="btn btn-primary btn-sm">
+              RSVP
+            </button>
+          </form>
+        {% endif %}
+
+        {% if current_user.id == event.created_by %}
+          <a href="{{ url_for('event_edit', event_id=event.id) }}"
+             class="btn btn-outline-primary btn-sm">
+            Edit
+          </a>
+          <form method="POST"
+                action="{{ url_for('event_delete', event_id=event.id) }}"
+                onsubmit="return confirm('Delete this event?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+              Delete
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="text-muted small">
+        <a href="{{ url_for('login') }}">Log in</a> to RSVP to this event.
+      </p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

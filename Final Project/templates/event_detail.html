@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+
+        <h1 class="card-title text-primary fw-bold">{{ event.title }}</h1>
+        <h5 class="card-subtitle text-muted mb-3">
+          {{ event.club.name }}
+        </h5>
+
+        <p class="mb-2">
+          <strong>Location:</strong> {{ event.location }}
+        </p>
+        <p class="mb-1">
+          <strong>Starts:</strong> {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+        </p>
+        {% if event.end_time %}
+          <p class="mb-1">
+            <strong>Ends:</strong> {{ event.end_time.strftime("%m-%d-%Y @ %I:%M %p") }}
+          </p>
+        {% endif %}
+
+        <hr>
+
+        {# FORMATTED DESCRIPTION FROM QUILL #}
+        {% if event.description %}
+          <div class="rich-text mb-3">
+            {{ event.description | safe }}
+          </div>
+        {% else %}
+          <p class="text-muted fst-italic mb-3">No description provided.</p>
+        {% endif %}
+
+        {# IMAGE UNDER DESCRIPTION #}
+        {% if event.image_filename %}
+          <div class="mt-2">
+            <img
+              src="{{ url_for('static', filename='uploads/' ~ event.image_filename) }}"
+              alt="Event image"
+              class="img-fluid rounded"
+            >
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Attendance</h5>
+        <p class="mb-3">
+          <strong>RSVPs:</strong> {{ event.rsvps|length }}
+        </p>
+
+        {% if current_user.is_authenticated %}
+          <form method="POST" action="{{ url_for('rsvp_event', event_id=event.id) }}">
+            <button type="submit" class="btn btn-primary w-100">
+              RSVP to this Event
+            </button>
+          </form>
+        {% else %}
+          <p class="text-muted mb-2">Log in to RSVP for this event.</p>
+          <a href="{{ url_for('login') }}" class="btn btn-outline-primary w-100">
+            Log In
+          </a>
+        {% endif %}
+
+        {% if current_user.is_authenticated and event.created_by == current_user.id %}
+          <a href="{{ url_for('event_edit', event_id=event.id) }}"
+             class="btn btn-outline-secondary w-100 mt-2">
+            Edit Event
+          </a>
+
+          <form method="POST"
+                action="{{ url_for('event_delete', event_id=event.id) }}"
+                class="mt-2"
+                onsubmit="return confirm('Are you sure you want to delete this event?');">
+            <button type="submit" class="btn btn-outline-danger w-100">
+              Delete Event
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <a href="{{ url_for('events') }}" class="btn btn-link">
+      ← Back to all events
+    </a>
+  </div>
+</div>
+
+{% endblock %}

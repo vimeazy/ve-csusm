@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if club.banner_filename %}
+  <div class="mb-4 club-banner">
+    <img
+      src="{{ url_for('static', filename='uploads/' ~ club.banner_filename) }}"
+      alt="{{ club.name }} banner"
+      class="img-fluid rounded shadow-sm"
+      style="width: 100%; height: 300px; object-fit: cover; display: block;"
+    >
+  </div>
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h1 class="card-title text-primary fw-bold mb-1">{{ club.name }}</h1>
+            {% if club.short_description %}
+              <p class="text-muted mb-1">{{ club.short_description }}</p>
+            {% endif %}
+            <p class="small text-muted mb-0">
+              Officer: {{ club.owner.name }} ({{ club.owner.email }})
+            </p>
+          </div>
+
+          {% if club.logo_filename %}
+            <img
+              src="{{ url_for('static', filename='uploads/' ~ club.logo_filename) }}"
+              alt="{{ club.name }} logo"
+              class="ms-3"
+              style="width: 80px; height: 80px; object-fit: cover; border-radius: 0.75rem;"
+            >
+          {% endif %}
+        </div>
+
+        <hr>
+
+        <h2 class="h6 fw-bold mb-2">About This Club</h2>
+        {% if club.description %}
+          <div class="rich-text">
+            {{ club.description | safe }}
+          </div>
+        {% else %}
+          <p class="text-muted fst-italic mb-0">
+            No detailed description added yet.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h2 class="h6 fw-bold mb-3">Upcoming Events</h2>
+
+        {# FIXED LINE HERE #}
+        {% set club_events = club.events | sort(attribute='start_time') %}
+
+        {% if club_events %}
+          <ul class="list-group list-group-flush">
+            {% for e in club_events %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <a href="{{ url_for('event_detail', event_id=e.id) }}"
+                     class="fw-semibold text-decoration-none">
+                    {{ e.title }}
+                  </a>
+                  <div class="small text-muted">
+                    {{ e.start_time.strftime("%m-%d-%Y @ %I:%M %p") }} &middot;
+                    {{ e.location }}
+                  </div>
+                </div>
+                <span class="badge bg-light text-dark border">
+                  RSVPs: {{ e.rsvps|length }}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">No events scheduled yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Contact & Links</h5>
+
+        {% if club.website %}
+          <p class="mb-2">
+            <strong>Website:</strong>
+            <a href="{{ club.website }}" target="_blank" rel="noopener">
+              {{ club.website }}
+            </a>
+          </p>
+        {% endif %}
+
+        {% if club.contact_email %}
+          <p class="mb-2">
+            <strong>Email:</strong>
+            <a href="mailto:{{ club.contact_email }}">{{ club.contact_email }}</a>
+          </p>
+        {% endif %}
+
+        {% if club.contact_phone %}
+          <p class="mb-2">
+            <strong>Phone:</strong> {{ club.contact_phone }}
+          </p>
+        {% endif %}
+
+        {% if not (club.website or club.contact_email or club.contact_phone) %}
+          <p class="text-muted mb-0">
+            No contact information added yet.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if current_user.is_authenticated and club.owner_id == current_user.id %}
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Manage Club</h5>
+          <a href="{{ url_for('club_edit', club_id=club.id) }}"
+             class="btn btn-outline-secondary w-100 mb-2">
+            Edit Club
+          </a>
+          <form method="POST"
+                action="{{ url_for('club_delete', club_id=club.id) }}"
+                onsubmit="return confirm('Delete this club and all its events?');">
+            <button type="submit" class="btn btn-outline-danger w-100">
+              Delete Club
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
+    <a href="{{ url_for('clubs') }}" class="btn btn-link">
+      ← Back to all clubs
+    </a>
+  </div>
+</div>
+
+{% endblock %}

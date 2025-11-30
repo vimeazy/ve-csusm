@@ -1,0 +1,869 @@
+/* =========================================
+   CougarHub / CSUSM Styling
+   ========================================= */
+
+/* ---------- Global ---------- */
+
+body {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf1 50%, #f0f4f8 100%);
+  background-attachment: fixed;
+  font-family: 'Montserrat', sans-serif;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Subtle noise texture overlay for misty feel */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" /></filter><rect width="100" height="100" fill="%23f0f4f8" filter="url(%23noise)" opacity="0.05"/></svg>');
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Main content area grows to fill available space */
+.main-content {
+  flex: 1;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Navbar + primary buttons in CSUSM navy */
+.navbar.bg-primary,
+.btn-primary,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #0033a0 !important; /* CSUSM navy */
+  border-color: #0033a0 !important;
+}
+
+.btn-primary:hover {
+  background-color: #00246d !important;
+  border-color: #00246d !important;
+}
+
+/* Search input styling */
+#eventSearch::placeholder,
+#clubSearch::placeholder {
+  color: #adb5bd !important;
+  font-weight: 400;
+}
+
+#eventSearch,
+#clubSearch {
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+#eventSearch:focus,
+#clubSearch:focus {
+  border-color: #0033a0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 51, 160, 0.15) !important;
+}
+
+/* Search suggestions dropdown */
+#searchSuggestions {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Search/Filter buttons */
+.events-search-btn {
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0.75rem;
+}
+
+.events-filter-btn {
+  font-size: 1.2rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.events-filter-item {
+  font-size: 1.1rem;
+}
+
+/* Event card animations */
+.event-card-item {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+
+.event-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card img {
+  max-height: 180px;
+  object-fit: cover;
+}
+
+/* Event list item styling */
+.event-list-item {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+
+.event-description {
+  max-height: 60px;
+  overflow: hidden;
+}
+
+.event-card-description {
+  max-height: 80px;
+  overflow: hidden;
+}
+
+/* Global placeholder styling for all inputs and textareas */
+input::placeholder,
+textarea::placeholder {
+  color: #adb5bd !important;
+  font-weight: 400;
+  opacity: 1 !important;
+}
+
+/* Primary text override */
+.text-primary {
+  color: #0033a0 !important;
+}
+
+/* Gold badge */
+.badge.bg-warning {
+  background-color: #ffcc00 !important; /* gold */
+  color: #000 !important;
+}
+
+/* ---------- Typography ---------- */
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.navbar {
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+.brand-cougar {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.brand-hub {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #3ab5e8; /* Spirit Blue */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+/* Navbar links styling */
+.navbar-nav .nav-link {
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  position: relative;
+  margin: 0 0.25rem;
+  padding: 0.75rem 0.5rem !important;
+  color: #e8f0f7 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-nav .nav-link:hover {
+  color: #3ab5e8 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-nav .nav-link.active {
+  color: #b8dce8 !important;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: 0;
+  left: 50%;
+  background-color: #3ab5e8;
+  transition: width 0.3s ease, left 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+.navbar-nav .nav-link.active::after {
+  width: 100%;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #0062a5; /* Cougar Blue */
+}
+
+.card-text {
+  color: #6b7280 !important;
+}
+
+/* ---------- Cards (no hover lift) ---------- */
+
+.card {
+  border-radius: 0.75rem;
+}
+
+/* Card titles as links */
+.card-title a {
+  color: #0062a5; /* Cougar Blue */
+  text-decoration: none;
+}
+
+.card-title a:hover {
+  color: #3ab5e8; /* Spirit Blue */
+  text-decoration: underline;
+}
+
+/* ---------- Card Link Hover Effect ---------- */
+
+.event-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+
+
+.event-card-link:hover .card {
+  box-shadow: 0 8px 16px rgba(0, 51, 160, 0.15) !important;
+}
+
+.event-card-link .card {
+  transition: all 0.3s ease;
+}
+
+/* ---------- Optional horizontal events row (if used anywhere) ---------- */
+
+.home-events-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  scroll-snap-type: x mandatory;
+}
+
+.home-events-row a {
+  scroll-snap-align: start;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.home-events-row a:hover .card {
+  box-shadow: 0 8px 16px rgba(0, 51, 160, 0.15) !important;
+}
+
+.home-events-row .card {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Truncate event titles to 1 line */
+.home-events-row .card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 1.4em; /* Approximately 1 line */
+  margin-bottom: 0.5rem;
+}
+
+.home-events-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.home-events-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.home-events-row::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+/* ---------- Rich Text (Quill content) ---------- */
+
+.rich-text {
+  line-height: 1.5;
+  color: #777; /* Lighter grey for non-bold text */
+}
+
+.rich-text p {
+  margin-bottom: 0.5rem;
+  color: #777;
+}
+
+.rich-text strong,
+.rich-text b {
+  color: #333; /* Darker for explicitly bold text */
+  font-weight: 700;
+}
+
+.rich-text ul,
+.rich-text ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #777;
+}
+
+/* =========================================
+   Home Page: Hero + Stats
+   ========================================= */
+
+/* HERO BANNER 
+   Make sure the image exists at: static/img/csusm_hero.jpg 
+   (CSS path is relative to /static/css/) */
+
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  background-image: url("../img/csusm_hero.png");
+  background-size: cover;
+  background-position: 90% center;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+/* ---------- Hero Carousel ---------- */
+
+.hero-carousel-container {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.hero-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-carousel-slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  pointer-events: none;
+}
+
+.hero-carousel-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-carousel-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-carousel-image-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-carousel-placeholder {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0033a0 0%, #0055d4 100%);
+}
+
+.hero-event-badge {
+  display: inline-block;
+  background-color: #ffcc00;
+  color: #000;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.hero-event-details {
+  font-size: 0.95rem;
+  opacity: 0.95;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* Carousel Navigation Dots */
+.hero-carousel-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.carousel-dot:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.carousel-dot.active {
+  background-color: #fff;
+  transform: scale(1.3);
+}
+
+/* Fallback hero banner */
+.hero-banner-fallback {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  background-image: url("../img/csusm_hero.png");
+  background-size: cover;
+  background-position: 90% center;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 51, 160, 0.9),
+    rgba(0, 51, 160, 0.6)
+  );
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.hero-overlay-event {
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.65),
+    rgba(0, 0, 0, 0.4)
+  );
+}
+
+.hero-inner {
+  padding: 0 2rem;
+}
+
+.hero-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.hero-cougar {
+  color: #fff;
+}
+
+.hero-hub {
+  color: #3ab5e8; /* Spirit Blue */
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  opacity: 0.95;
+}
+
+.hero-actions .btn {
+  border-radius: 20px;
+  padding: 6px 16px;
+}
+
+/* ---------- Stats Cards ---------- */
+
+.stat-card {
+  border-radius: 0.75rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0033a0;
+  margin-bottom: 0.15rem;
+}
+
+.stat-caption {
+  font-size: 0.8rem;
+}
+
+/* =========================================
+   Promotional Banner
+   ========================================= */
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 51, 160, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 51, 160, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 51, 160, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-group-item,
+.col {
+  transition: all 0.3s ease-in-out;
+}
+
+.promo-banner {
+  background: linear-gradient(135deg, #0033a0 0%, #004ec9 100%);
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  color: #fff;
+  animation: slideInDown 0.6s ease-out;
+  box-shadow: 0 4px 15px rgba(0, 51, 160, 0.2);
+}
+
+.promo-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.promo-badge {
+  background-color: rgba(255, 255, 255, 0.25);
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  animation: pulse-glow 2s infinite;
+  white-space: nowrap;
+}
+
+.promo-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.promo-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin: 0;
+  flex: 1;
+  min-width: 200px;
+}
+
+.promo-btn {
+  background-color: #fff;
+  color: #0033a0;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.promo-btn:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #0033a0;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+  .promo-banner {
+    padding: 1rem;
+  }
+
+  .promo-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .promo-title {
+    font-size: 1rem;
+  }
+
+  .promo-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* =========================================
+   Event & Club Cards
+   ========================================= */
+
+/* Links wrapping cards */
+.event-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Event images */
+.event-img {
+  height: 150px;
+  object-fit: cover;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+
+/* Featured club cards on home page */
+.featured-club-card {
+  border-radius: 0.75rem;
+}
+
+.club-logo-img {
+  height: 70px;
+  width: 100%;
+  object-fit: contain;
+  padding: 0.5rem 0.75rem 0 0.75rem;
+  background-color: #ffffff;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  display: block;
+  box-sizing: border-box;       /* Include padding in width calculation */
+  margin: 0;                    /* Remove any default margins */
+}
+
+/* Truncate club website to one line */
+.featured-club-card .card-body > p:last-child {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================
+   Section Headers (Happening This Week, etc)
+   ========================================= */
+
+.section-header {
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #0033a0;
+  background-color: rgba(93, 173, 226, 0.05);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  border-radius: 0.5rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0033a0;
+  margin-bottom: 0 !important;
+  letter-spacing: 0.5px;
+}
+
+.week-date {
+  font-size: 0.9rem;
+  color: #0033a0;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  background-color: rgba(0, 51, 160, 0.08);
+  border-radius: 0.4rem;
+}
+
+.no-events-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: rgba(0, 51, 160, 0.03);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 51, 160, 0.1);
+}
+
+.no-events-message p {
+  font-size: 1.1rem;
+  color: #0033a0;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* =========================================
+   Profile Image
+   ========================================= */
+
+.profile-image-container {
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 51, 160, 0.15);
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.profile-image-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f0f0f0;
+}
+
+.profile-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Footer styling */
+.footer {
+  font-size: 0.85rem;
+  margin-top: auto;
+}
+
+.footer-logo {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: #6c757d;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+  color: #0033a0;
+}
+
+/* Card Animations */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 51, 160, 0.15) !important;
+}
+
+/* ---------- Club Banner ---------- */
+
+.club-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.club-banner img {
+  object-position: center;
+  transition: object-position 0.3s ease;
+}

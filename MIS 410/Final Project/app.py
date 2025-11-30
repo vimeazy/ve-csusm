@@ -177,6 +177,10 @@ def my_events():
         reverse=True,
     )
     rsvp_events = [rsvp.event for rsvp in rsvps_sorted]
+    
+    # Deduplicate: remove events from rsvp_events if they're already in created
+    created_ids = {e.id for e in created}
+    rsvp_events = [e for e in rsvp_events if e.id not in created_ids]
 
     return render_template("my_events.html", created=created, rsvp_events=rsvp_events, now=datetime.now())
 
@@ -205,11 +209,32 @@ def profile():
     )
     rsvp_events = [rsvp.event for rsvp in rsvps_sorted]
 
+    # Separate upcoming and past events
+    now = datetime.now()
+    
+    upcoming_created = [e for e in created_events if e.start_time > now]
+    past_created = [e for e in created_events if e.start_time <= now]
+    
+    upcoming_rsvp = [e for e in rsvp_events if e.start_time > now]
+    past_rsvp = [e for e in rsvp_events if e.start_time <= now]
+
+    # Calculate stats
+    stats = {
+        'clubs': len(officer_clubs),
+        'events_created': len(created_events),
+        'events_attending': len(rsvp_events),
+    }
+
     return render_template(
         "profile.html",
         officer_clubs=officer_clubs,
         created_events=created_events,
+        upcoming_created=upcoming_created,
+        past_created=past_created,
         rsvp_events=rsvp_events,
+        upcoming_rsvp=upcoming_rsvp,
+        past_rsvp=past_rsvp,
+        stats=stats,
     )
 
 
@@ -220,6 +245,11 @@ def edit_profile():
 
     if form.validate_on_submit():
         current_user.name = form.name.data
+        current_user.bio = form.bio.data
+        current_user.website = form.website.data
+        current_user.twitter = form.twitter.data
+        current_user.instagram = form.instagram.data
+        current_user.linkedin = form.linkedin.data
         
         # Handle profile image upload
         if form.profile_image.data:

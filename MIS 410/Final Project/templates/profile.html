@@ -1,140 +1,240 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row">
-  <div class="col-lg-4 mb-4">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        {% if current_user.profile_image_filename %}
-          <div class="profile-image-container">
-            <img 
-              src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image_filename) }}"
-              alt="Profile picture">
-          </div>
-        {% endif %}
-
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <div>
-            <h2 class="h4 fw-bold mb-1">My Profile</h2>
-            <span class="badge bg-primary-subtle text-primary">
-              {{ current_user.role|capitalize }}
-            </span>
-          </div>
-          <a href="{{ url_for('edit_profile') }}" class="btn btn-sm btn-outline-secondary">
-            Edit
-          </a>
+<div class="profile-container">
+  <!-- Profile Header Card -->
+  <div class="profile-header-card">
+    <div class="profile-header-content">
+      {% if current_user.profile_image_filename %}
+        <div class="profile-image-container">
+          <img 
+            src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image_filename) }}"
+            alt="Profile picture">
         </div>
+      {% else %}
+        <div class="profile-image-container profile-image-placeholder">
+          <i class="bi bi-person-fill"></i>
+        </div>
+      {% endif %}
+      
+      <div class="profile-header-info">
+        <h1 class="profile-name">{{ current_user.name }}</h1>
+        <span class="profile-role">{{ current_user.role|capitalize }}</span>
+        <p class="profile-email">{{ current_user.email }}</p>
+        {% if current_user.member_since %}
+          <p class="profile-member-since">Member since {{ current_user.member_since.strftime("%B %Y") }}</p>
+        {% endif %}
+      </div>
 
-        <p class="mb-1">
-          <strong>Name:</strong><br>
-          <span class="text-primary fw-semibold">{{ current_user.name }}</span>
-        </p>
-        <p class="mb-1">
-          <strong>Email:</strong><br>
-          <span class="text-primary fw-semibold">{{ current_user.email }}</span>
-        </p>
+      <a href="{{ url_for('edit_profile') }}" class="btn btn-primary btn-sm ms-auto">
+        Edit Profile
+      </a>
+    </div>
+  </div>
 
-        <hr>
+  <!-- Bio Section -->
+  {% if current_user.bio or current_user.website or current_user.twitter or current_user.instagram or current_user.linkedin %}
+    <div class="profile-bio-card">
+      {% if current_user.bio %}
+        <div class="profile-bio">
+          <h3 class="profile-bio-title">About</h3>
+          <p>{{ current_user.bio }}</p>
+        </div>
+      {% endif %}
 
-        <a href="{{ url_for('clubs', my='1') }}" class="btn btn-outline-primary w-100 mb-2">
-          View My Clubs
-        </a>
+      {% if current_user.website or current_user.twitter or current_user.instagram or current_user.linkedin %}
+        <div class="profile-social-links">
+          {% if current_user.website %}
+            <a href="{{ current_user.website }}" target="_blank" rel="noopener" class="social-link" title="Website">
+              <i class="bi bi-globe"></i>
+            </a>
+          {% endif %}
+          {% if current_user.twitter %}
+            <a href="https://twitter.com/{{ current_user.twitter }}" target="_blank" rel="noopener" class="social-link" title="Twitter">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+          {% endif %}
+          {% if current_user.instagram %}
+            <a href="https://instagram.com/{{ current_user.instagram }}" target="_blank" rel="noopener" class="social-link" title="Instagram">
+              <i class="bi bi-instagram"></i>
+            </a>
+          {% endif %}
+          {% if current_user.linkedin %}
+            <a href="{{ current_user.linkedin }}" target="_blank" rel="noopener" class="social-link linkedin-link" title="LinkedIn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
 
-        <p class="text-muted small mb-0">
-          Use My Clubs to see organizations where you’re listed as an officer.
-        </p>
+  <!-- Stats Section -->
+  <div class="profile-stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon clubs-icon">
+        <i class="bi bi-people-fill"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.clubs }}</div>
+        <div class="stat-label">Club{{ "s" if stats.clubs != 1 else "" }} Managed</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon events-icon">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.events_created }}</div>
+        <div class="stat-label">Event{{ "s" if stats.events_created != 1 else "" }} Created</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon attending-icon">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.events_attending }}</div>
+        <div class="stat-label">Event{{ "s" if stats.events_attending != 1 else "" }} Attending</div>
       </div>
     </div>
   </div>
 
-
-  <div class="col-lg-8">
-    {# Officer clubs section #}
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h3 class="h5 fw-bold mb-3">Clubs I’m an Officer For</h3>
+  <!-- Main Content Grid -->
+  <div class="row mt-5">
+    <!-- Left Column: Clubs -->
+    <div class="col-lg-6">
+      <div class="profile-section-card">
+        <div class="profile-section-header">
+          <h2>My Clubs</h2>
+          <a href="{{ url_for('clubs', my='1') }}" class="text-primary small">View All</a>
+        </div>
 
         {% if officer_clubs %}
-          <ul class="list-group list-group-flush">
+          <div class="profile-items-list">
             {% for club in officer_clubs %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <a href="{{ url_for('club_detail', club_id=club.id) }}" class="fw-semibold text-decoration-none">
+              <div class="profile-item">
+                <div class="profile-item-content">
+                  <a href="{{ url_for('club_detail', club_id=club.id) }}" class="profile-item-title">
                     {{ club.name }}
                   </a>
                   {% if club.website %}
-                    <div class="small">
-                      <a href="{{ club.website }}" target="_blank" rel="noopener">
-                        {{ club.website }}
-                      </a>
-                    </div>
+                    <a href="{{ club.website }}" target="_blank" rel="noopener" class="profile-item-link">
+                      {{ club.website }}
+                    </a>
                   {% endif %}
                 </div>
                 <a href="{{ url_for('club_edit', club_id=club.id) }}" class="btn btn-sm btn-outline-secondary">
                   Edit
                 </a>
-              </li>
+              </div>
             {% endfor %}
-          </ul>
+          </div>
         {% else %}
-          <p class="text-muted mb-0">
-            You’re not listed as an officer for any clubs yet.
-          </p>
+          <p class="text-muted mb-0">You're not an officer for any clubs yet.</p>
         {% endif %}
       </div>
     </div>
 
-    {# Events created by this user #}
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h3 class="h5 fw-bold mb-3">Events I Created</h3>
+    <!-- Right Column: Events -->
+    <div class="col-lg-6">
+      <div class="profile-section-card">
+        <div class="profile-section-header">
+          <h2>My Events</h2>
+          <a href="{{ url_for('my_events') }}" class="text-primary small">View All</a>
+        </div>
 
-        {% if created_events %}
-          <ul class="list-group list-group-flush">
-            {% for event in created_events %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <a href="{{ url_for('event_detail', event_id=event.id) }}" class="fw-semibold text-decoration-none">
-                    {{ event.title }}
-                  </a>
-                  <div class="small text-muted">
-                    {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
-                    · {{ event.location }}
+        {% if upcoming_created or upcoming_rsvp or past_created or past_rsvp %}
+          <div class="profile-items-list">
+            <!-- Upcoming Created Events -->
+            {% if upcoming_created %}
+              <div class="profile-subsection">
+                <h3 class="profile-subsection-title">Upcoming (Created)</h3>
+                {% for event in upcoming_created[:2] %}
+                  <div class="profile-item">
+                    <div class="profile-item-content">
+                      <a href="{{ url_for('event_detail', event_id=event.id) }}" class="profile-item-title">
+                        {{ event.title }}
+                      </a>
+                      <div class="profile-item-meta">
+                        {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }} · {{ event.location }}
+                      </div>
+                    </div>
+                    <a href="{{ url_for('event_edit', event_id=event.id) }}" class="btn btn-sm btn-outline-secondary">
+                      Edit
+                    </a>
                   </div>
-                </div>
-                <a href="{{ url_for('event_edit', event_id=event.id) }}" class="btn btn-sm btn-outline-secondary">
-                  Edit
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted mb-0">You haven’t created any events yet.</p>
-        {% endif %}
-      </div>
-    </div>
+                {% endfor %}
+              </div>
+            {% endif %}
 
-    {# Events user RSVP’d to #}
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h3 class="h5 fw-bold mb-3">Events I RSVP’d To</h3>
+            <!-- Upcoming RSVP Events -->
+            {% if upcoming_rsvp %}
+              <div class="profile-subsection">
+                <h3 class="profile-subsection-title">Upcoming (Attending)</h3>
+                {% for event in upcoming_rsvp[:2] %}
+                  <div class="profile-item">
+                    <div class="profile-item-content">
+                      <a href="{{ url_for('event_detail', event_id=event.id) }}" class="profile-item-title">
+                        {{ event.title }}
+                      </a>
+                      <div class="profile-item-meta">
+                        {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }} · {{ event.location }}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
 
-        {% if rsvp_events %}
-          <ul class="list-group list-group-flush">
-            {% for event in rsvp_events %}
-              <li class="list-group-item">
-                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="fw-semibold text-decoration-none">
-                  {{ event.title }}
-                </a>
-                <div class="small text-muted">
-                  {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }}
-                  · {{ event.location }}
+            <!-- Past Events (if no upcoming) -->
+            {% if not upcoming_created and not upcoming_rsvp %}
+              {% if past_created %}
+                <div class="profile-subsection">
+                  <h3 class="profile-subsection-title">Past (Created)</h3>
+                  {% for event in past_created[:2] %}
+                    <div class="profile-item">
+                      <div class="profile-item-content">
+                        <a href="{{ url_for('event_detail', event_id=event.id) }}" class="profile-item-title">
+                          {{ event.title }}
+                        </a>
+                        <div class="profile-item-meta">
+                          {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }} · {{ event.location }}
+                        </div>
+                      </div>
+                      <a href="{{ url_for('event_edit', event_id=event.id) }}" class="btn btn-sm btn-outline-secondary">
+                        Edit
+                      </a>
+                    </div>
+                  {% endfor %}
                 </div>
-              </li>
-            {% endfor %}
-          </ul>
+              {% endif %}
+
+              {% if past_rsvp %}
+                <div class="profile-subsection">
+                  <h3 class="profile-subsection-title">Past (Attended)</h3>
+                  {% for event in past_rsvp[:2] %}
+                    <div class="profile-item">
+                      <div class="profile-item-content">
+                        <a href="{{ url_for('event_detail', event_id=event.id) }}" class="profile-item-title">
+                          {{ event.title }}
+                        </a>
+                        <div class="profile-item-meta">
+                          {{ event.start_time.strftime("%m-%d-%Y @ %I:%M %p") }} · {{ event.location }}
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
         {% else %}
-          <p class="text-muted mb-0">You haven’t RSVP’d to any events yet.</p>
+          <p class="text-muted mb-0">No events yet.</p>
         {% endif %}
       </div>
     </div>

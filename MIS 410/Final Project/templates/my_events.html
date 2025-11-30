@@ -10,8 +10,182 @@
   </div>
 </div>
 
-<!-- Calendar View -->
-<div class="card mb-5">
+<!-- Search bar -->
+<div class="row g-2 mb-4">
+  <div class="col-md-6 position-relative">
+    <input
+      type="text"
+      id="eventSearch"
+      class="form-control form-control-sm"
+      placeholder="Search events by name or description..."
+      autocomplete="off"
+      style="border: 1px solid #dee2e6; transition: all 0.3s ease; padding: 0.5rem 0.75rem; font-size: 0.95rem;"
+    >
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<ul class="nav nav-tabs mb-4" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab">
+      All Events
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="created-tab" data-bs-toggle="tab" data-bs-target="#created-tab-pane" type="button" role="tab">
+      Events I Created
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="rsvp-tab" data-bs-toggle="tab" data-bs-target="#rsvp-tab-pane" type="button" role="tab">
+      Events I RSVP'd To
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-tab-pane" type="button" role="tab">
+      Past Events
+    </button>
+  </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content mb-5">
+  <!-- All Events Tab -->
+  <div class="tab-pane fade show active" id="all-tab-pane" role="tabpanel">
+    <div class="scrollable-events-container">
+      {% set all_events = created + rsvp_events %}
+      {% if all_events %}
+        <div class="list-group">
+          {% for e in all_events|sort(attribute='start_time', reverse=True) %}
+            <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3 event-list-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ e.title }}</h6>
+                  <p class="mb-2 text-muted small">
+                    {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
+                  </p>
+                  <div>
+                    {% if e in created %}
+                      <span class="badge bg-primary">Created</span>
+                    {% endif %}
+                    {% if e in rsvp_events %}
+                      <span class="badge bg-success">Attending</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <span class="badge {% if e.start_time > now %}bg-success{% else %}bg-secondary{% endif %}">
+                  {% if e.start_time > now %}UPCOMING{% else %}PAST{% endif %}
+                </span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No events yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Events I Created Tab -->
+  <div class="tab-pane fade" id="created-tab-pane" role="tabpanel">
+    <div class="scrollable-events-container">
+      {% if created %}
+        <div class="list-group">
+          {% for e in created|sort(attribute='start_time', reverse=True) %}
+            <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3 event-list-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ e.title }}</h6>
+                  <p class="mb-2 text-muted small">
+                    {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
+                  </p>
+                  <span class="badge bg-info">{{ e.rsvps|length }} RSVP{{ 's' if e.rsvps|length != 1 else '' }}</span>
+                </div>
+                <span class="badge {% if e.start_time > now %}bg-success{% else %}bg-secondary{% endif %}">
+                  {% if e.start_time > now %}UPCOMING{% else %}PAST{% endif %}
+                </span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">You haven't created any events yet.</p>
+        {% if current_user.role == "officer" %}
+          <a href="{{ url_for('event_create') }}" class="btn btn-primary">Create Event</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Events I RSVP'd To Tab -->
+  <div class="tab-pane fade" id="rsvp-tab-pane" role="tabpanel">
+    <div class="scrollable-events-container">
+      {% if rsvp_events %}
+        <div class="list-group">
+          {% for e in rsvp_events|sort(attribute='start_time', reverse=True) %}
+            <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3 event-list-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ e.title }}</h6>
+                  <p class="mb-2 text-muted small">
+                    {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
+                  </p>
+                  <span class="badge bg-success">Attending</span>
+                </div>
+                <span class="badge {% if e.start_time > now %}bg-success{% else %}bg-secondary{% endif %}">
+                  {% if e.start_time > now %}UPCOMING{% else %}PAST{% endif %}
+                </span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">You haven't RSVP'd to any events yet.</p>
+        <a href="{{ url_for('events') }}" class="btn btn-primary">Browse Events</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Past Events Tab -->
+  <div class="tab-pane fade" id="past-tab-pane" role="tabpanel">
+    <div class="scrollable-events-container">
+      {% set past_created = created|selectattr('start_time', '<=', now)|list %}
+      {% set past_rsvp = rsvp_events|selectattr('start_time', '<=', now)|list %}
+      {% set past_ids = past_created|map(attribute='id')|list %}
+      {% set all_past = past_created + (past_rsvp|rejectattr('id', 'in', past_ids)|list) %}
+      {% if all_past %}
+        <div class="list-group">
+          {% for e in all_past|sort(attribute='start_time', reverse=True) %}
+            <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3 event-list-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ e.title }}</h6>
+                  <p class="mb-2 text-muted small">
+                    {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
+                  </p>
+                  <div>
+                    {% if e in created %}
+                      <span class="badge bg-primary">Created</span>
+                    {% endif %}
+                    {% if e in rsvp_events %}
+                      <span class="badge bg-success">Attended</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <span class="badge bg-secondary">PAST</span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted">No past events.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Calendar View at Bottom -->
+<div class="card">
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="h5 fw-bold mb-0">Event Calendar</h2>
@@ -42,70 +216,36 @@
   </div>
 </div>
 
-<!-- All Events Sections -->
-<div class="row g-4">
-  <!-- Events I Created Section -->
-  <div class="col-lg-6">
-    <h2 class="h5 fw-bold mb-3">Events I Created</h2>
-    
-    {% if created %}
-      <div class="list-group">
-        {% for e in created %}
-          <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <h6 class="mb-1">{{ e.title }}</h6>
-                <p class="mb-2 text-muted small">
-                  {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
-                </p>
-                <span class="badge bg-info">{{ e.rsvps|length }} RSVP{{ 's' if e.rsvps|length != 1 else '' }}</span>
-              </div>
-              <span class="badge {% if e.start_time > now %}bg-success{% else %}bg-secondary{% endif %}">
-                {% if e.start_time > now %}UPCOMING{% else %}PAST{% endif %}
-              </span>
-            </div>
-          </a>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-muted">You haven't created any events yet.</p>
-      {% if current_user.role == "officer" %}
-        <a href="{{ url_for('event_create') }}" class="btn btn-primary">Create Event</a>
-      {% endif %}
-    {% endif %}
-  </div>
-
-  <!-- Events I RSVP'd To Section -->
-  <div class="col-lg-6">
-    <h2 class="h5 fw-bold mb-3">Events I RSVP'd To</h2>
-    
-    {% if rsvp_events %}
-      <div class="list-group">
-        {% for e in rsvp_events %}
-          <a href="{{ url_for('event_detail', event_id=e.id) }}" class="list-group-item list-group-item-action py-3">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <h6 class="mb-1">{{ e.title }}</h6>
-                <p class="mb-2 text-muted small">
-                  {{ e.start_time.strftime("%b %d, %Y at %I:%M %p") }} • {{ e.location }} • {{ e.club.name }}
-                </p>
-                <span class="badge bg-success">Attending</span>
-              </div>
-              <span class="badge {% if e.start_time > now %}bg-success{% else %}bg-secondary{% endif %}">
-                {% if e.start_time > now %}UPCOMING{% else %}PAST{% endif %}
-              </span>
-            </div>
-          </a>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p class="text-muted">You haven't RSVP'd to any events yet.</p>
-      <a href="{{ url_for('events') }}" class="btn btn-primary">Browse Events</a>
-    {% endif %}
-  </div>
-</div>
-
 <style>
+  .nav-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  .nav-tabs .nav-link:hover {
+    color: #0033a0;
+    border-bottom-color: #e9ecef;
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #0033a0;
+    background-color: transparent;
+    border-bottom-color: #0033a0;
+    font-weight: 600;
+  }
+
+  .event-list-item {
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+
+  .event-list-item:hover {
+    border-color: #0033a0;
+    box-shadow: 0 2px 8px rgba(0, 51, 160, 0.1);
+  }
+
   .calendar-day {
     height: 120px;
     vertical-align: top;
@@ -229,5 +369,46 @@
 </script>
 
 <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+
+<!-- Real-time event search -->
+<script>
+document.getElementById('eventSearch').addEventListener('input', function(e) {
+  const searchQuery = e.target.value.toLowerCase();
+  
+  // Get all event items across all tabs
+  const allItems = document.querySelectorAll('.event-list-item');
+  
+  allItems.forEach(item => {
+    const title = item.querySelector('h6').textContent.toLowerCase();
+    const details = item.querySelector('.text-muted').textContent.toLowerCase();
+    
+    // Check if search query matches title or details
+    if (searchQuery === '' || title.includes(searchQuery) || details.includes(searchQuery)) {
+      item.style.display = '';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+  
+  // Show "no results" message if all items are hidden in current tab
+  const activeTab = document.querySelector('.tab-pane.show.active');
+  if (activeTab) {
+    const visibleItems = activeTab.querySelectorAll('.event-list-item:not([style*="display: none"])');
+    const noResultsMsg = activeTab.querySelector('.text-muted');
+    
+    if (visibleItems.length === 0 && searchQuery !== '') {
+      if (!activeTab.querySelector('.no-search-results')) {
+        const msg = document.createElement('p');
+        msg.className = 'text-muted no-search-results';
+        msg.textContent = 'No events matching your search.';
+        activeTab.querySelector('.scrollable-events-container').appendChild(msg);
+      }
+    } else {
+      const msg = activeTab.querySelector('.no-search-results');
+      if (msg) msg.remove();
+    }
+  }
+});
+</script>
 
 {% endblock %}

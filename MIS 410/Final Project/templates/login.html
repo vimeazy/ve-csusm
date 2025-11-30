@@ -1,42 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row justify-content-center">
-  <div class="col-md-6 col-lg-5">
-    
-    <div class="card shadow-sm p-4">
-      <h2 class="text-center mb-4 text-primary fw-bold">Log In to CougarHub</h2>
+<div class="login-container">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <!-- Header Section -->
+      <div class="login-header">
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to your CougarHub account</p>
+      </div>
 
-      <form method="POST">
+      <!-- Form Section -->
+      <form method="POST" class="login-form">
         {{ form.hidden_tag() }}
 
-        <div class="mb-3">
-          {{ form.email.label(class="form-label") }}
-          {{ form.email(class="form-control", placeholder="name@csusm.edu") }}
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="{{ form.email.id }}" class="form-label">Email Address</label>
+          {{ form.email(class="form-control login-input", id=form.email.id, placeholder="name@csusm.edu") }}
           {% for error in form.email.errors %}
-            <div class="text-danger">{{ error }}</div>
+            <small class="form-text text-danger d-block mt-1">{{ error }}</small>
           {% endfor %}
         </div>
 
-        <div class="mb-3">
-          {{ form.password.label(class="form-label") }}
-          {{ form.password(class="form-control", placeholder="Password") }}
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="{{ form.password.id }}" class="form-label">Password</label>
+          {{ form.password(class="form-control login-input", id=form.password.id, placeholder="Enter your password") }}
           {% for error in form.password.errors %}
-            <div class="text-danger">{{ error }}</div>
+            <small class="form-text text-danger d-block mt-1">{{ error }}</small>
           {% endfor %}
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">
-          Log In
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-login w-100">
+          Sign In
         </button>
-
-        <p class="mt-3 text-center">
-          Don't have an account?
-          <a href="{{ url_for('register') }}">Register here</a>
-        </p>
       </form>
-    </div>
 
+      <!-- Divider -->
+      <div class="login-divider">
+        <span>New to CougarHub?</span>
+      </div>
+
+      <!-- Register Link -->
+      <div class="login-footer">
+        <p class="mb-0">
+          <a href="{{ url_for('register') }}" class="login-register-link">Create an account</a>
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 

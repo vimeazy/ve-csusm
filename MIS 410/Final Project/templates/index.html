@@ -91,29 +91,29 @@
 <!-- QUICK STATS -->
 <div class="row g-3 mb-4">
   <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0s;">
-    <div class="card stat-card shadow-sm">
-      <div class="card-body">
+    <div class="card stat-card shadow-sm h-100">
+      <div class="card-body d-flex flex-column justify-content-center align-items-center text-center py-3">
+        <div class="stat-value mb-1">{{ club_count }}</div>
         <div class="stat-label">Active Clubs</div>
-        <div class="stat-value">{{ club_count }}</div>
-        <div class="stat-caption text-muted">Student organizations on CougarHub</div>
+        <div class="stat-caption text-muted small mt-1">Student organizations on CougarHub</div>
       </div>
     </div>
   </div>
   <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0.1s;">
-    <div class="card stat-card shadow-sm">
-      <div class="card-body">
+    <div class="card stat-card shadow-sm h-100">
+      <div class="card-body d-flex flex-column justify-content-center align-items-center text-center py-3">
+        <div class="stat-value mb-1">{{ event_count }}</div>
         <div class="stat-label">Upcoming Events</div>
-        <div class="stat-value">{{ event_count }}</div>
-        <div class="stat-caption text-muted">Events listed on the platform</div>
+        <div class="stat-caption text-muted small mt-1">Events listed on the platform</div>
       </div>
     </div>
   </div>
   <div class="col-md-4" style="animation: fadeInUp 0.5s ease-out backwards; animation-delay: 0.2s;">
-    <div class="card stat-card shadow-sm">
-      <div class="card-body">
+    <div class="card stat-card shadow-sm h-100">
+      <div class="card-body d-flex flex-column justify-content-center align-items-center text-center py-3">
+        <div class="stat-value mb-1">{{ rsvp_count }}</div>
         <div class="stat-label">Total RSVPs</div>
-        <div class="stat-value">{{ rsvp_count }}</div>
-        <div class="stat-caption text-muted">Students planning to attend</div>
+        <div class="stat-caption text-muted small mt-1">Students planning to attend</div>
       </div>
     </div>
   </div>

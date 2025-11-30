@@ -19,6 +19,16 @@ class User(UserMixin, db.Model):
     # Profile image filename (stored in static/uploads)
     profile_image_filename = db.Column(db.String(255), nullable=True)
 
+    # Profile fields
+    bio = db.Column(db.Text, nullable=True)
+    website = db.Column(db.String(255), nullable=True)
+    twitter = db.Column(db.String(255), nullable=True)
+    instagram = db.Column(db.String(255), nullable=True)
+    linkedin = db.Column(db.String(255), nullable=True)
+    
+    # Timestamp when user joined
+    member_since = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
     # Events this user created
     events_created = db.relationship("Event", backref="creator", lazy=True)
 

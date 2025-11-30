@@ -31,6 +31,11 @@ class LoginForm(FlaskForm):
 
 class ProfileForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(max=80)])
+    bio = TextAreaField("Bio (optional)", validators=[Optional(), Length(max=500)])
+    website = StringField("Website (optional)", validators=[Optional(), URL(message="Please enter a valid URL"), Length(max=255)])
+    twitter = StringField("Twitter Handle (optional)", validators=[Optional(), Length(max=255)])
+    instagram = StringField("Instagram Handle (optional)", validators=[Optional(), Length(max=255)])
+    linkedin = StringField("LinkedIn Profile (optional)", validators=[Optional(), URL(message="Please enter a valid URL"), Length(max=255)])
     profile_image = FileField("Profile Picture (optional)", validators=[Optional(), FileAllowed(["jpg", "jpeg", "png", "gif"], "Images only!")])
     submit = SubmitField("Save Changes")
 

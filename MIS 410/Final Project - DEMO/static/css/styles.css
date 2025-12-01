@@ -1,6 +1,4 @@
-/* ============================
-   Global Layout & Background
-   ============================ */
+/* Global Layout & Background */
 
 body {
   background: #f3f6fb; /* soft light blue/gray */
@@ -12,9 +10,7 @@ body {
   max-width: 1140px;
 }
 
-/* ============================
-   Navbar
-   ============================ */
+/* Navigation Bar */
 
 .navbar {
   box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
@@ -36,9 +32,7 @@ body {
   text-underline-offset: 3px;
 }
 
-/* ============================
-   Headings & Text
-   ============================ */
+/* Heading & Text */
 
 h1, h2, h3, h4 {
   font-weight: 700;
@@ -54,9 +48,7 @@ h1, h2, h3, h4 {
   color: #6c757d;
 }
 
-/* ============================
-   Cards
-   ============================ */
+/* Cards */
 
 .card {
   border-radius: 0.85rem;
@@ -75,9 +67,7 @@ h1, h2, h3, h4 {
   margin-bottom: 0.25rem;
 }
 
-/* ============================
-   Buttons
-   ============================ */
+/* Buttons */
 
 .btn-primary {
   background-color: #0033a0;
@@ -103,17 +93,13 @@ h1, h2, h3, h4 {
   border-radius: 999px;
 }
 
-/* ============================
-   Alerts (flash messages)
-   ============================ */
+/* Alerts */
 
 .alert {
   border-radius: 0.75rem;
 }
 
-/* ============================
-   Forms
-   ============================ */
+/* Forms */
 
 .form-label {
   font-weight: 500;
@@ -136,9 +122,7 @@ textarea.form-control {
   min-height: 140px;
 }
 
-/* ============================
-   Utility helpers
-   ============================ */
+/* Utiility Helpers */
 
 .section-header {
   font-size: 0.8rem;
@@ -148,9 +132,7 @@ textarea.form-control {
   font-weight: 600;
 }
 
-/* ============================
-   Authentication Pages
-   ============================ */
+/* Authentication Pages (Login/Register) */
 
 .auth-container {
   display: flex;
